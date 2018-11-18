@@ -1,6 +1,16 @@
 import json
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+import re
+
+import numpy as np
+from keras.datasets import imdb
+from keras.models import Sequential
+from keras.layers import Dense, Activation
+from keras.layers import LSTM, Conv1D, Flatten
+from keras.layers import Dropout
+from keras.layers.embeddings import Embedding
+from keras.preprocessing import sequence
 
 json_file = open('data.json')
 json_string = json_file.read()
@@ -19,7 +29,7 @@ for movie in json_data:
         continue
     storyline = word_tokenize(storyline.strip().lower())
 
-    rating = movie['imdb_score'][0]
+    rating = movie['gross']
     if not rating:
         continue
 
@@ -31,7 +41,7 @@ for movie in json_data:
                 words[word] = 1
 
     x.append(storyline)
-    y.append(rating)
+    y.append(int(re.sub(",|$| |\n", "", rating[0])[1:]))
 
 #print('INPUT')
 #print(x[:20])
@@ -80,4 +90,30 @@ for story in x:
     #pads each story with 0s if it is not the maxsize
     story += [0]*(maxsize - len(story))
         
-        
+x_test = x[int(0.8*len(x)):]
+x_train = (x[:int(0.8*len(x))])
+x_train = np.array(x_train)/28078
+
+y_test = y[int(0.8*len(x)):]
+y_train = y[:int(0.8*len(x))]
+y_train = np.array([(l - min(y_train))/(max(y_train)-min(y_train)) for l in y_train])
+
+embedding_vecor_length = 32
+model = Sequential()
+model.add(Embedding(top_words, embedding_vecor_length, input_length=maxsize))
+model.add(Conv1D(64, 5, activation='relu'))
+model.add(Flatten())
+
+model.add(Dense(512))
+model.add(Activation('relu'))
+
+model.add(Dense(512))
+model.add(Activation('relu'))
+
+model.add(Dense(512))
+model.add(Activation('relu'))
+
+model.add(Dense(1, activation='relu'))
+model.compile(loss='mse', optimizer='sgd', metrics=['accuracy'])
+print(model.summary())
+model.fit(x_train, y_train, epochs=50, batch_size=64)
