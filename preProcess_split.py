@@ -4,12 +4,16 @@ from collections import Counter
 
 
 
-json_file = open('imdb_output.json')
+json_file = open('data.json')
 json_string = json_file.read()
 json_data = json.loads(json_string)
 
+# placeholders for eventual sorted lists of words and frequency of those words, respectively
 sorted_words = []
 sorted_word_frequency = []
+
+list of gross for all movies
+gross = movie['gross']
 
 
 def giantString():
@@ -26,7 +30,6 @@ def giantString():
         # append to master string
         allWords += storyline
 
-        gross = movie['gross']
 
     return(allWords)
 
@@ -34,13 +37,18 @@ def giantString():
 def tokenizePlots():
 
     bigString = giantString()
+    
+    # create pair list of (word, frequency)
     return Counter(word_tokenize(bigString)).most_common()
 
 def splitDict():
 
     tokenHash = tokenizePlots()
+    
+    # convert list from before to dict
     my_dict = dict(tokenHash)
 
+    # update global variables
     global sorted_words
     sorted_words = my_dict.keys()
 
@@ -51,8 +59,6 @@ def splitDict():
 def main():
 
     splitDict()
-    print(sorted_words)
-    print(sorted_word_frequency)
 
 
 main()
