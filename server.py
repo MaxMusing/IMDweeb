@@ -1,4 +1,5 @@
 import os
+import random
 from flask import Flask, request, jsonify, send_from_directory
 app = Flask(__name__, static_folder='client/build')
 
@@ -16,11 +17,12 @@ if __name__ == '__main__':
     app.run(use_reloader=True, port=5000, threaded=True)
 
 
-@app.route("/get-revenue", methods=['POST'])
+@app.route("/get-genre", methods=['POST'])
 def getRating():
     storyline = request.json['storyline']
 
     # sample calculation, ML processing goes here
-    revenue = len(storyline.split())
+    genre = random.choice(
+        ['Comedy', 'Action', 'Adventure', 'Thriller', 'Drama', 'Mystery', 'Romance'])
 
-    return jsonify({"revenue": revenue})
+    return jsonify({"genre": genre})
