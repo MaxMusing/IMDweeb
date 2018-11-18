@@ -86,7 +86,7 @@ for story in x:
     #if size is bigger than maxsize, maxsize becomes size
     if size > maxsize:
         maxsize = size
-
+maxsize = 250
 #for each story in x
 for story in x:
     #pads each story with 0s if it is not the maxsize
@@ -116,19 +116,41 @@ embedding_vecor_length = 32
 
 
 model = Sequential()
-model.add(Dense(100, input_dim=(maxsize)))
+
+x_train_big = (x[:int(0.8*len(x))])
+y_train_big = y[:int(0.8*len(x))]
+
+
+
+
+model.add(Dense(50, input_dim=(maxsize)))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Dense(50, input_dim=(maxsize)))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+
+model.add(Dense(50, input_dim=(maxsize)))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['categorical_accuracy'])
 print(model.metrics_names)
 print(model.summary())
 
-model.fit(x_train, y_train, epochs=50, batch_size=16, validation_split=0.2)
+#for counter in range(100):
+#    i = counter % 5;
+#    x_valid = (x_train_big[int(i * 0.2 *len(x_train)):int((i+1) * 0.2 *len(x_train))])
+#    y_valid = (y_train_big[int(i * 0.2 *len(y_train)):int((i+1) * 0.2 *len(y_train))])
+#    
+
+model.fit(x_train, y_train, epochs=10, batch_size=16, validation_split=0.2)
 scores = model.evaluate(x_test, y_test, verbose=0)
 print("Accuracy: %.2f%%" % (scores[1]*100))
-model.save('model_01.h5')
-
-numpy.save('vocabulary', vocabulary)
+#model.save('model_01.h5')
+np.save('found_genres', found_genres)
+np.save('vocabulary', vocabulary)
