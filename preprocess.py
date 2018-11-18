@@ -130,3 +130,5 @@ model.fit(x_train, y_train, epochs=50, batch_size=16, validation_split=0.2)
 scores = model.evaluate(x_test, y_test, verbose=0)
 print("Accuracy: %.2f%%" % (scores[1]*100))
 model.save('model_01.h5')
+
+numpy.save('vocabulary', vocabulary)

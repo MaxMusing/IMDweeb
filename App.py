@@ -15,4 +15,11 @@ from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
 import keras
 
-model = load()
+##compute input text
+
+
+
+model = keras.models.load_model('model_01.h5')
+
+prediction = model.predict(input_text)
+print(prediction)
