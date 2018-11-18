@@ -10,7 +10,7 @@ x = []
 y = []
 
 words = {}
-punc = ['.', '?', '!', ',', '...', '\'ll', '\'ve', ')', '\'\'', '``', '(', '-', 'n\'t', '\'s', ';',':']
+punc = ['.', '?', '!', ',', '...', '\'ll', '\'ve', ')', '\'\'', '``', '(', '-', 'n\'t', '\'s', ';',':', '\'', '--']
 stop_words = set(stopwords.words("english"))
 
 for movie in json_data:
@@ -33,13 +33,13 @@ for movie in json_data:
     x.append(storyline)
     y.append(rating)
 
-print('INPUT')
-print(x[:20])
+#print('INPUT')
+#print(x[:20])
 
-print('OUTPUT')
-print(y[:20])
+#print('OUTPUT')
+#print(y[:20])
 
-print('WORDS')
+#print('WORDS')
 #print(words)
 
 #sorted(words, key=words.get, reverse=True)
