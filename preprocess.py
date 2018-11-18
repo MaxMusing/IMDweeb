@@ -105,28 +105,28 @@ for z in y:
 x_test = x[int(0.8*len(x)):]
 x_train = (x[:int(0.8*len(x))])
 x_train = np.array(x_train)/29000
+x_test = np.array(x_test)/29000
 
 y_test = y[int(0.8*len(x)):]
 y_train = y[:int(0.8*len(x))]
 y_train = keras.utils.to_categorical(y_train, max(y)+1)
+y_test = keras.utils.to_categorical(y_test, max(y)+1)
 num_classes = max(y) + 1
 embedding_vecor_length = 32
 
 
 model = Sequential()
-model.add(Dense(512, input_dim=(maxsize)))
+model.add(Dense(100, input_dim=(maxsize)))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
-model.add(Dense(512, input_dim=(maxsize)))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
-model.add(Dense(512, input_dim=(maxsize)))
-model.add(Activation('relu'))
-model.add(Dropout(0.5))
+
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 print(model.metrics_names)
 print(model.summary())
 
-model.fit(x_train, y_train, epochs=50, batch_size=64)
+model.fit(x_train, y_train, epochs=50, batch_size=16, validation_split=0.2)
+scores = model.evaluate(x_test, y_test, verbose=0)
+print("Accuracy: %.2f%%" % (scores[1]*100))
+model.save('model_01.h5')
