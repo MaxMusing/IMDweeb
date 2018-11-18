@@ -1,6 +1,8 @@
 import os
 import random
 from flask import Flask, request, jsonify, send_from_directory
+from App import getGenre
+
 app = Flask(__name__, static_folder='client/build')
 
 
@@ -18,11 +20,8 @@ if __name__ == '__main__':
 
 
 @app.route("/get-genre", methods=['POST'])
-def getRating():
+def getGenreAPI():
     storyline = request.json['storyline']
-
-    # sample calculation, ML processing goes here
-    genre = random.choice(
-        ['Comedy', 'Action', 'Adventure', 'Thriller', 'Drama', 'Mystery', 'Romance'])
+    genre = getGenre(storyline)
 
     return jsonify({"genre": genre})

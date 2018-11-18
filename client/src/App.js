@@ -99,6 +99,7 @@ class App extends Component {
 		this.numWords = this.numWords.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.wordLimit = 500;
 	}
 
 	numWords() {
@@ -109,7 +110,10 @@ class App extends Component {
 	handleChange(event) {
 		const { value } = event.target;
 
-		if (this.numWords() >= 250 && value.length > this.state.storyline.length) {
+		if (
+			this.numWords() >= this.wordLimit &&
+			value.length > this.state.storyline.length
+		) {
 			return;
 		}
 
@@ -158,7 +162,9 @@ class App extends Component {
 						value={this.state.storyline}
 						onChange={this.handleChange}
 					/>
-					<WordCount>{this.numWords()} / 250</WordCount>
+					<WordCount>
+						{this.numWords()} / {this.wordLimit}
+					</WordCount>
 					<Button>Predict genre</Button>
 				</Form>
 				{this.state.loading ? (
