@@ -36,3 +36,7 @@ print(y[:20])
 
 print('WORDS')
 print(words)
+
+#sorted(words, key=words.get, reverse=True)
+vocabulary =[(k, words[k]) for k in sorted(words, key=words.get, reverse=True)]
+
