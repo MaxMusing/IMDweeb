@@ -11,6 +11,7 @@ from keras.layers import LSTM, Conv1D, Flatten
 from keras.layers import Dropout
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
+import keras
 
 json_file = open('data.json')
 json_string = json_file.read()
@@ -29,7 +30,7 @@ for movie in json_data:
         continue
     storyline = word_tokenize(storyline.strip().lower())
 
-    rating = movie['gross']
+    rating = movie['genres']
     if not rating:
         continue
 
@@ -41,7 +42,8 @@ for movie in json_data:
                 words[word] = 1
 
     x.append(storyline)
-    y.append(int(re.sub(",|$| |\n", "", rating[0])[1:]))
+   # y.append(int(re.sub(",|$| |\n", "", rating[0])[1:]))
+    y.append(rating[0])
 
 #print('INPUT')
 #print(x[:20])
@@ -89,31 +91,42 @@ for story in x:
 for story in x:
     #pads each story with 0s if it is not the maxsize
     story += [0]*(maxsize - len(story))
-        
+found_genres=[]   
+    
+for genre in y:
+    if genre not in found_genres:
+        found_genres.append(genre)
+i = 0
+for z in y:
+    y[i] = found_genres.index(z)
+    i += 1
+                    
+    
 x_test = x[int(0.8*len(x)):]
 x_train = (x[:int(0.8*len(x))])
-x_train = np.array(x_train)/28078
+x_train = np.array(x_train)/29000
 
 y_test = y[int(0.8*len(x)):]
 y_train = y[:int(0.8*len(x))]
-y_train = np.array([(l - min(y_train))/(max(y_train)-min(y_train)) for l in y_train])
-
+y_train = keras.utils.to_categorical(y_train, max(y)+1)
+num_classes = max(y) + 1
 embedding_vecor_length = 32
+
+
 model = Sequential()
-model.add(Embedding(top_words, embedding_vecor_length, input_length=maxsize))
-model.add(Conv1D(64, 5, activation='relu'))
-model.add(Flatten())
-
-model.add(Dense(512))
+model.add(Dense(512, input_dim=(maxsize)))
 model.add(Activation('relu'))
-
-model.add(Dense(512))
+model.add(Dropout(0.5))
+model.add(Dense(512, input_dim=(maxsize)))
 model.add(Activation('relu'))
-
-model.add(Dense(512))
+model.add(Dropout(0.5))
+model.add(Dense(512, input_dim=(maxsize)))
 model.add(Activation('relu'))
-
-model.add(Dense(1, activation='relu'))
-model.compile(loss='mse', optimizer='sgd', metrics=['accuracy'])
+model.add(Dropout(0.5))
+model.add(Dense(num_classes))
+model.add(Activation('softmax'))
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+print(model.metrics_names)
 print(model.summary())
+
 model.fit(x_train, y_train, epochs=50, batch_size=64)
